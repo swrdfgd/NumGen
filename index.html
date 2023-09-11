@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Random Number Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      padding-top: 40px;
+      color: #333;
+    }
+
+    .container {
+      margin: 40px auto;
+      max-width: 400px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    select,
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:active {
+      background-color: #45a0E2;
+    }
+
+
+    #result {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+  
+  <script>
+	rationalSet = [[0,1]];
+	
+	function rationalSetUpdate(){
+		var rationalSetNew = [];
+		pilihanI = Math.floor(Math.random()*rationalSet.length);
+		for (let i = 0; i < rationalSet.length; i++){
+			rationalSetNew.push(rationalSet[i])
+			
+			if (i == pilihanI){
+				if (i < rationalSet.length - 1){
+					rationalSetNew.push([rationalSet[i][0] + rationalSet[i+1][0],rationalSet[i][1] + rationalSet[i+1][1]]);
+				}
+				else {
+					rationalSetNew.push([rationalSet[i][0] + 1,rationalSet[i][1]]);
+				}
+			}
+		}
+		rationalSet = rationalSetNew;
+		if (Math.random() < 1/2){rationalSetUpdate();}
+	}
+	
+	rationalSetUpdate();
+  
+  </script>
+  
+  <script>
+    var hasilSebelumnya; var OK = false;
+    function generateNumber() {
+      var select = document.getElementById("numberType");
+      var numberType = select.value;
+      var result = document.getElementById("result");
+      var randomNumber;
+	  var count = 0;
+	  
+
+      switch (numberType) {
+        case "integer":
+          randomNumber = (Math.floor(1/(1-Math.random()))-1)*((-1)**(Math.floor(Math.random()*2))); // Generates a random integer between 0 and 99
+          break;
+        case "natural":
+          randomNumber = Math.floor(1/(1-Math.random())) + Math.floor(Math.random()*count); count++; 
+          break;
+        case "decimal":
+          randomNumber = ((1/(1-Math.random()))-1)*((-1)**(Math.floor(Math.random()*2))); // Generates a random decimal with 2 decimal places
+		  if (Math.random() < 1/2){
+			randomNumber1 = '' + (Math.floor(1/(1-Math.random()))-1)*((-1)**(Math.floor(Math.random()*2)));
+			while (Math.random() < 1/2){
+				randomNumber1 += Math.floor(Math.random()*10);
+			}
+			randomNumber2 = '' + Math.floor(1/(1-Math.random())) + Math.floor(Math.random()*count);
+			while (Math.random() < 1/2){
+				randomNumber2 += Math.floor(Math.random()*10);
+			}
+			randomNumber = randomNumber1 + '.' + randomNumber2;
+		  }
+          break;
+		 case "rational":
+          randomNumberRat = rationalSet[Math.floor(Math.random()*rationalSet.length)]; 
+		  randomNumber = randomNumberRat[0] + '/' + randomNumberRat[1];
+		  if (Math.random() < 1/2){randomNumber = '-' + randomNumber;}
+          break;
+        default:
+          randomNumber = "Invalid selection";
+      }
+      if (OK == true){if ((hasilSebelumnya = randomNumber)&&(Math.random() < 1/2)){ generateNumber(); return }}
+
+      result.textContent = "Result: " + randomNumber;
+      hasilSebelumnya = randomNumber; OK = true;
+	
+	  rationalSetUpdate();
+    }
+  </script>
+</head>
+<body>
+  <h1>Random Number Generator</h1>
+  <div class="container">
+    <label for="numberType">Select number type:</label>
+    <select id="numberType">
+      <option value="integer">Integer</option>
+      <option value="natural">Natural Number</option>
+      <option value="decimal">Decimal Number</option>
+	  <option value="rational">Rational Number</option>
+    </select>
+    <button onclick="generateNumber()">Generate</button>
+    <div id="result"></div>
+  </div>
+</body>
+</html>
